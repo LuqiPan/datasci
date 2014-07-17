@@ -87,15 +87,40 @@ def main():
     tweet_file = open(sys.argv[2])
 
     scores = {}
-    #for line in sent_file:
-        #term, score = line.split("\t")
-        #scores[term] = int(score)
+    for line in sent_file:
+        term, score = line.split("\t")
+        scores[term] = int(score)
+
+    state_scores = {}
+    states_reverse = {}
+    for state in states.keys():
+        state_scores[state] = 0
+        states_reverse[states[state]] = state
 
     for line in tweet_file:
         tweet = json.loads(line)
         word1, word2 = get_location_words(tweet)
+        score = get_tweet_score(tweet)
         if word1:
-            print word1, word2
+            #print word1, word2
+            if states.has_key(word1):
+                state_scores[word1] += score
+                continue
+            if states.has_key(word2):
+                state_scores[word2] += score
+                continue
+            if states_reverse.has_key(word1):
+                state_scores[states_reverse[word1]] += score
+                continue
+
+    max = 0
+    state_max = ""
+    for state in state_scores:
+        if state_scores[state] > max:
+            max = state_scores[state]
+            state_max = state
+
+    print state_max
 
 if __name__ == '__main__':
     main()
