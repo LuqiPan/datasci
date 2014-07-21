@@ -7,13 +7,10 @@ mr = MapReduce.MapReduce()
 # Do not modify above this line
 
 def mapper(record):
-    mr.emit_intermediate(min(record) + max(record), record)
+    mr.emit_intermediate(record[0], 1)
 
 def reducer(key, list_of_records):
-    if len(list_of_records) == 1:
-        record = list_of_records[0]
-        mr.emit((record[0], record[1]))
-        mr.emit((record[1], record[0]))
+    mr.emit((key, len(list_of_records)))
 
 # Do not modify below this line
 # =============================
